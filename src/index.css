@@ -1,0 +1,1030 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
+
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────────────────── */
+
+@theme {
+  /* Typography */
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: "Montserrat", system-ui, -apple-system, sans-serif;
+
+  --text-display-xl: 3.75rem;
+  --text-display-xl--line-height: 1.1;
+  --text-display-xl--letter-spacing: -0.02em;
+
+  --text-display-lg: 3rem;
+  --text-display-lg--line-height: 1.15;
+  --text-display-lg--letter-spacing: -0.02em;
+
+  --text-display-md: 2.25rem;
+  --text-display-md--line-height: 1.2;
+  --text-display-md--letter-spacing: -0.01em;
+
+  --text-display-sm: 1.75rem;
+  --text-display-sm--line-height: 1.25;
+
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.4;
+  --text-heading--letter-spacing: 0.2em;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.6;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+  --text-caption--letter-spacing: 0.12em;
+
+  /* Cream — page backgrounds */
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #faf7f2;
+  --color-cream-200: #f5f0e8;
+  --color-cream-300: #ebe3d6;
+  --color-cream-400: #ddd2c0;
+
+  /* Olive — primary brand, buttons, dark sections (#556B2F Deep Olive Green) */
+  --color-olive-950: #1a1f11;
+  --color-olive-900: #3d4a22;
+  --color-olive-800: #556b2f;
+  --color-olive-700: #627338;
+  --color-olive-600: #72804a;
+  --color-olive-500: #84955c;
+  --color-olive-400: #9aac70;
+  --color-olive-300: #b5c49a;
+  --color-olive-200: #d1dbbd;
+  --color-olive-100: #eaefe0;
+
+  /* Brown — body text & warm accents */
+  --color-brown-950: #1f1b17;
+  --color-brown-900: #3a3530;
+  --color-brown-800: #4a4238;
+  --color-brown-700: #5c4a3a;
+  --color-brown-600: #6b5344;
+  --color-brown-500: #7a7268;
+  --color-brown-400: #9a9186;
+  --color-brown-300: #b8afa4;
+  --color-brown-200: #d5cec4;
+  --color-brown-100: #ebe6de;
+
+  /* Gold — stars, highlights, decorative accents */
+  --color-gold-600: #a88b45;
+  --color-gold-500: #c4a35a;
+  --color-gold-400: #d4b87a;
+  --color-gold-300: #e4cfa0;
+  --color-gold-200: #f0e2c4;
+  --color-gold-100: #f8f0e0;
+
+  /* Terracotta — subtle warm accent */
+  --color-terracotta-600: #9e6b52;
+  --color-terracotta-500: #b87d62;
+  --color-terracotta-400: #d4997f;
+
+  /* Semantic aliases */
+  --color-background: var(--color-cream-100);
+  --color-foreground: var(--color-brown-900);
+  --color-muted: var(--color-brown-500);
+  --color-primary: var(--color-olive-800);
+  --color-primary-foreground: #ffffff;
+  --color-accent: var(--color-gold-500);
+  --color-border: var(--color-cream-300);
+  --color-border-dark: var(--color-olive-700);
+
+  /* Spacing — section rhythm */
+  --spacing-section: 5rem;
+  --spacing-section-lg: 7rem;
+
+  /* Layout */
+  --width-container: 75rem;
+  --width-container-narrow: 56rem;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-arch: 50% 50% 0 0 / 20% 20% 0 0;
+  --radius-full: 9999px;
+
+  /* Shadows — warm, soft */
+  --shadow-soft: 0 2px 16px rgb(60 50 40 / 0.06);
+  --shadow-card: 0 4px 24px rgb(60 50 40 / 0.08);
+  --shadow-card-hover: 0 8px 32px rgb(60 50 40 / 0.12);
+  --shadow-nav: 0 1px 12px rgb(61 74 34 / 0.08);
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* Z-index scale */
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-float: 150;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-lightbox: 400;
+}
+
+/* ─── Base Styles ───────────────────────────────────────────────────────── */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    overscroll-behavior-y: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-brown-900);
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--text-display-lg);
+    line-height: var(--text-display-lg--line-height);
+    letter-spacing: var(--text-display-lg--letter-spacing);
+  }
+
+  h2 {
+    font-size: var(--text-display-md);
+    line-height: var(--text-display-md--line-height);
+    letter-spacing: var(--text-display-md--letter-spacing);
+  }
+
+  h3 {
+    font-size: var(--text-display-sm);
+    line-height: var(--text-display-sm--line-height);
+  }
+
+  p {
+    color: var(--color-muted);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-smooth);
+  }
+
+  a:hover {
+    color: var(--color-olive-700);
+  }
+
+  img,
+  picture,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  ::selection {
+    background-color: var(--color-olive-200);
+    color: var(--color-olive-900);
+  }
+}
+
+/* ─── Layout Utilities ──────────────────────────────────────────────────── */
+
+@utility container-ashwini {
+  width: 100%;
+  max-width: var(--width-container);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 640px) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (width >= 1024px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility section-padding {
+  padding-block: var(--spacing-section);
+
+  @media (width >= 1024px) {
+    padding-block: var(--spacing-section-lg);
+  }
+}
+
+@utility section-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  line-height: var(--text-caption--line-height);
+  letter-spacing: var(--text-caption--letter-spacing);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-olive-700);
+}
+
+@utility section-subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  color: var(--color-muted);
+}
+
+/* ─── Button Utilities ──────────────────────────────────────────────────── */
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  border: none;
+  transition:
+    background-color var(--duration-normal) var(--ease-smooth),
+    color var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth),
+    transform var(--duration-fast) var(--ease-smooth);
+}
+
+@utility btn-primary {
+  background-color: var(--color-olive-800);
+  color: var(--color-primary-foreground);
+
+  &:hover {
+    background-color: var(--color-olive-900);
+    box-shadow: var(--shadow-card);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@utility btn-secondary {
+  background-color: transparent;
+  color: var(--color-olive-800);
+  border: 1.5px solid var(--color-olive-800);
+
+  &:hover {
+    background-color: var(--color-olive-100);
+  }
+}
+
+@utility btn-ghost {
+  background-color: transparent;
+  color: var(--color-olive-800);
+  padding-inline: 1rem;
+
+  &:hover {
+    color: var(--color-olive-600);
+  }
+}
+
+/* ─── Card & Surface Utilities ──────────────────────────────────────────── */
+
+@utility card {
+  background-color: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--duration-normal) var(--ease-smooth);
+}
+
+@utility card-hover {
+  &:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+@utility surface-cream {
+  background-color: var(--color-cream-100);
+}
+
+@utility surface-olive {
+  background-color: var(--color-olive-800);
+  color: #ffffff;
+}
+
+@utility surface-dark {
+  background-color: var(--color-olive-900);
+  color: #ffffff;
+}
+
+/* ─── Decorative Utilities ──────────────────────────────────────────────── */
+
+@utility text-gradient-gold {
+  background: linear-gradient(
+    135deg,
+    var(--color-gold-600),
+    var(--color-gold-400)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility divider-leaf {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-olive-300),
+      transparent
+    );
+  }
+}
+
+@utility grain-overlay {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px 128px;
+  }
+}
+
+/* ─── Focus & Accessibility ─────────────────────────────────────────────── */
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-olive-600);
+    outline-offset: 2px;
+  }
+}
+
+/* ─── Hero image — seamless blend into cream background ───────────────────── */
+
+@utility hero-image-blend {
+  -webkit-mask-image: radial-gradient(
+    ellipse 90% 84% at 50% 56%,
+    #000 34%,
+    rgb(0 0 0 / 0.85) 52%,
+    transparent 74%
+  );
+  mask-image: radial-gradient(
+    ellipse 90% 84% at 50% 56%,
+    #000 34%,
+    rgb(0 0 0 / 0.85) 52%,
+    transparent 74%
+  );
+  filter: drop-shadow(0 18px 28px rgb(44 58 34 / 0.1));
+}
+
+@utility hero-right-image {
+  filter: drop-shadow(0 20px 32px rgb(44 58 34 / 0.12));
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.9) 14%,
+    #000 22%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.9) 14%,
+    #000 22%,
+    #000 100%
+  );
+}
+
+@utility about-image-blend {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 72%,
+    rgb(0 0 0 / 0.85) 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 72%,
+    rgb(0 0 0 / 0.85) 84%,
+    transparent 100%
+  );
+}
+
+@utility about-leaves-bg {
+  /* screen removes black PNG bg; keeps gold line art visible on cream */
+  mix-blend-mode: screen;
+  opacity: 0.75;
+  -webkit-mask-image: radial-gradient(
+    ellipse 100% 95% at 100% 100%,
+    #000 20%,
+    rgb(0 0 0 / 0.8) 45%,
+    rgb(0 0 0 / 0.35) 65%,
+    transparent 88%
+  );
+  mask-image: radial-gradient(
+    ellipse 100% 95% at 100% 100%,
+    #000 20%,
+    rgb(0 0 0 / 0.8) 45%,
+    rgb(0 0 0 / 0.35) 65%,
+    transparent 88%
+  );
+}
+
+/* ─── Hero section — top branch decor ───────────────────────────────────── */
+
+@utility hero-text-scrim {
+  background: linear-gradient(
+    to right,
+    rgb(26 31 17 / 0.9) 0%,
+    rgb(26 31 17 / 0.72) 42%,
+    rgb(26 31 17 / 0.38) 72%,
+    transparent 100%
+  );
+}
+
+@utility hero-branches-decor {
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.85) 14%,
+    #000 22%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.85) 14%,
+    #000 22%,
+    #000 100%
+  );
+}
+
+/* ─── Products section — branch decor & cards ───────────────────────────── */
+
+@utility products-branches-decor {
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(
+    to top,
+    #000 0%,
+    rgb(0 0 0 / 0.85) 18%,
+    rgb(0 0 0 / 0.35) 42%,
+    transparent 72%
+  );
+  mask-image: linear-gradient(
+    to top,
+    #000 0%,
+    rgb(0 0 0 / 0.85) 18%,
+    rgb(0 0 0 / 0.35) 42%,
+    transparent 72%
+  );
+}
+
+@utility products-branches-decor-top {
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.85) 14%,
+    #000 22%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.85) 14%,
+    #000 22%,
+    #000 100%
+  );
+}
+
+@utility products-heading-line {
+  width: 3.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-olive-600),
+    transparent
+  );
+}
+
+@utility product-ornate-frame {
+  position: relative;
+  background-color: #faf7f2;
+  clip-path: url(#product-ornate-clip);
+  filter: drop-shadow(0 2px 16px rgb(60 50 40 / 0.06));
+  transition:
+    transform var(--duration-normal) var(--ease-smooth),
+    filter var(--duration-normal) var(--ease-smooth);
+
+  &:hover {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 4px 24px rgb(60 50 40 / 0.08));
+  }
+}
+
+@utility products-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--duration-normal) var(--ease-smooth);
+
+  &:hover {
+    box-shadow: var(--shadow-card);
+  }
+}
+
+/* ─── Why Choose section ─────────────────────────────────────────────────── */
+
+@utility why-choose-section {
+  background: linear-gradient(
+    165deg,
+    var(--color-olive-950) 0%,
+    var(--color-olive-900) 42%,
+    var(--color-olive-800) 100%
+  );
+}
+
+@utility why-choose-glow {
+  background:
+    radial-gradient(ellipse 50% 60% at 15% 50%, rgb(196 163 90 / 0.08), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 50%, rgb(196 163 90 / 0.08), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgb(26 34 24 / 0.5), transparent 70%);
+}
+
+@utility why-choose-side-decor {
+  opacity: 0.42;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    rgb(0 0 0 / 0.7) 55%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    rgb(0 0 0 / 0.7) 55%,
+    transparent 100%
+  );
+}
+
+@utility why-choose-heading-line {
+  width: 3.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-gold-400),
+    transparent
+  );
+}
+
+@utility why-choose-icon-ring {
+  border: 1.5px dashed var(--color-gold-400);
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  box-shadow:
+    0 0 0 4px rgb(196 163 90 / 0.06),
+    0 2px 12px rgb(0 0 0 / 0.08);
+  transition:
+    border-color var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth);
+
+  .group:hover & {
+    border-color: var(--color-gold-300);
+    box-shadow:
+      0 0 0 6px rgb(196 163 90 / 0.1),
+      0 4px 16px rgb(0 0 0 / 0.1);
+  }
+}
+
+@utility why-choose-divider {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgb(196 163 90 / 0.45) 20%,
+    rgb(196 163 90 / 0.45) 80%,
+    transparent
+  );
+}
+
+/* ─── Process section ─────────────────────────────────────────────────────── */
+
+@utility process-step-ring {
+  border: 1.5px solid var(--color-brown-700);
+  border-radius: var(--radius-full);
+  padding: 0.3rem;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--duration-normal) var(--ease-smooth);
+
+  .group:hover & {
+    box-shadow: var(--shadow-card);
+  }
+}
+
+@utility process-step-icon-wrap {
+  width: 5.5rem;
+  height: 5.5rem;
+
+  @media (width >= 640px) {
+    width: 6.25rem;
+    height: 6.25rem;
+  }
+
+  @media (width >= 1024px) {
+    width: 6.75rem;
+    height: 6.75rem;
+  }
+}
+
+@utility process-arrow-connector {
+  @media (width >= 1024px) {
+    align-self: flex-start;
+    margin-top: calc(0.3rem + 6.75rem / 2 - 0.5rem);
+  }
+}
+
+@utility footer-contact-decor {
+  opacity: 0.45;
+}
+
+@utility footer-contact-decor-top {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.85) 14%,
+    #000 22%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(0 0 0 / 0.35) 6%,
+    rgb(0 0 0 / 0.85) 14%,
+    #000 22%,
+    #000 100%
+  );
+}
+
+/* ─── Logo loader ───────────────────────────────────────────────────────── */
+
+@utility logo-loader-track {
+  background-color: var(--color-cream-300);
+  box-shadow: inset 0 1px 2px rgb(60 50 40 / 0.08);
+}
+
+@utility logo-loader-fill {
+  background: linear-gradient(
+    90deg,
+    var(--color-olive-700),
+    var(--color-olive-500),
+    var(--color-gold-500)
+  );
+  box-shadow: 0 0 12px rgb(85 107 47 / 0.35);
+}
+
+@utility why-choose-side-decor-right {
+  opacity: 0.42;
+  -webkit-mask-image: linear-gradient(
+    to left,
+    #000 0%,
+    rgb(0 0 0 / 0.7) 55%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to left,
+    #000 0%,
+    rgb(0 0 0 / 0.7) 55%,
+    transparent 100%
+  );
+}
+
+/* ─── Reviews section ─────────────────────────────────────────────────────── */
+
+@utility reviews-section {
+  background: linear-gradient(
+    180deg,
+    var(--color-cream-100) 0%,
+    var(--color-cream-200) 45%,
+    var(--color-cream-100) 100%
+  );
+}
+
+@utility reviews-glow {
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgb(85 107 47 / 0.07), transparent 65%),
+    radial-gradient(ellipse 55% 45% at 90% 80%, rgb(196 163 90 / 0.09), transparent 60%);
+}
+
+@utility reviews-heading-line {
+  width: 3.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-olive-500),
+    transparent
+  );
+}
+
+@utility reviews-stats-bar {
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-xl);
+  background: rgb(255 255 255 / 0.65);
+  padding: 1.25rem 0.75rem;
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(6px);
+}
+
+@utility reviews-stat {
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 15%;
+    right: 0;
+    height: 70%;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--color-cream-400),
+      transparent
+    );
+  }
+}
+
+@utility reviews-featured {
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    var(--color-cream-50) 55%,
+    rgb(232 239 224 / 0.35) 100%
+  );
+  padding: 1.75rem 1.5rem;
+  box-shadow: var(--shadow-card);
+
+  @media (width >= 40rem) {
+    padding: 2.25rem 2rem;
+  }
+}
+
+@utility reviews-featured-avatar {
+  border-radius: var(--radius-full);
+  box-shadow:
+    0 0 0 3px rgb(255 255 255 / 0.9),
+    0 0 0 4px var(--color-gold-300);
+}
+
+@utility reviews-card {
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-xl);
+  background: #ffffff;
+  padding: 1.25rem 1.15rem;
+  box-shadow: var(--shadow-soft);
+  transition:
+    box-shadow var(--duration-normal) var(--ease-smooth),
+    transform var(--duration-normal) var(--ease-smooth);
+
+  &:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+@utility reviews-avatar {
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    145deg,
+    var(--color-olive-600),
+    var(--color-olive-800)
+  );
+  box-shadow: 0 2px 8px rgb(85 107 47 / 0.2);
+}
+
+@utility reviews-quote {
+  position: relative;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--color-gold-300);
+}
+
+@utility reviews-product-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-olive-200);
+  background: var(--color-olive-100);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-olive-800);
+}
+
+@utility reviews-marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+@utility reviews-marquee-track {
+  animation: reviews-marquee 38s linear infinite;
+}
+
+@utility reviews-marquee-reverse {
+  animation-direction: reverse;
+}
+
+@utility reviews-marquee-chip {
+  width: 16rem;
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-lg);
+  background: rgb(255 255 255 / 0.8);
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+@keyframes reviews-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ─── Product detail page ───────────────────────────────────────────────────── */
+
+@utility product-gallery-main {
+  box-shadow: var(--shadow-soft);
+}
+
+@utility product-hero-bg {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 10% 0%,
+      rgb(181 196 154 / 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 90% 20%,
+      rgb(212 184 122 / 0.14),
+      transparent 50%
+    ),
+    linear-gradient(180deg, var(--color-cream-100) 0%, var(--color-cream-50) 100%);
+}
+
+@utility product-purity-card {
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 0.95) 0%,
+    var(--color-cream-50) 100%
+  );
+  box-shadow: var(--shadow-soft);
+}
+
+@utility product-info-panel {
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(
+    160deg,
+    rgb(255 255 255 / 0.92) 0%,
+    var(--color-cream-100) 55%,
+    var(--color-cream-200) 100%
+  );
+  box-shadow: var(--shadow-soft);
+}
+
+@utility product-benefit-card {
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-lg);
+  background: rgb(255 255 255 / 0.88);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+@utility product-section-olive {
+  background: linear-gradient(
+    165deg,
+    var(--color-olive-950) 0%,
+    var(--color-olive-900) 45%,
+    var(--color-olive-800) 100%
+  );
+}
+
+@utility product-section-cream {
+  background:
+    radial-gradient(
+      ellipse 60% 45% at 100% 0%,
+      rgb(132 149 92 / 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 0% 100%,
+      rgb(196 163 90 / 0.12),
+      transparent 50%
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-cream-50) 0%,
+      var(--color-cream-100) 55%,
+      var(--color-cream-50) 100%
+    );
+}
+
+@utility product-heading-line {
+  width: 3.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-olive-500),
+    transparent
+  );
+}
+
+/* ─── Admin panel ─────────────────────────────────────────────────────────── */
+
+@utility admin-page-header {
+  margin-bottom: 1.5rem;
+}
