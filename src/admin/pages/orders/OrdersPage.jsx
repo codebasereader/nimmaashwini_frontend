@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Plus, Search } from "lucide-react";
+import { FileSpreadsheet, Plus, Search } from "lucide-react";
 import {
   clearAdminOrderDetail,
   clearAdminOrderErrors,
@@ -10,6 +10,7 @@ import {
   loadAdminOrders,
 } from "../../../store/slices/adminOrdersSlice";
 import { iconProps } from "../../../lib/icons";
+import { exportAdminOrders } from "../../../lib/orderExport";
 import AdminDataTable, { StatusPill } from "../../components/AdminDataTable";
 import AdminPagination from "../../components/AdminPagination";
 import { AdminInput, AdminSelect } from "../../components/AdminFormFields";
@@ -108,6 +109,7 @@ export default function OrdersPage() {
     mutationStatus,
     mutationError,
   } = useSelector((state) => state.adminOrders);
+  const token = useSelector((state) => state.auth.token);
 
   const defaultRange = useMemo(() => getThisMonthRange(), []);
   const [page, setPage] = useState(1);
@@ -124,6 +126,8 @@ export default function OrdersPage() {
   const [formKey, setFormKey] = useState(0);
   const [editingStatus, setEditingStatus] = useState("pending");
   const [pendingStatus, setPendingStatus] = useState(null);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState(null);
 
   const listParams = useMemo(
     () => ({
@@ -222,6 +226,27 @@ export default function OrdersPage() {
   const handlePresetClick = (preset) => {
     const nextRange = preset.getRange();
     applyDateRange(nextRange, preset.key);
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    setExportError(null);
+    try {
+      await exportAdminOrders({
+        filters: {
+          fromDate: appliedRange.fromDate,
+          toDate: appliedRange.toDate,
+          status: statusFilter,
+          paymentStatus: paymentStatusFilter,
+          search,
+        },
+        token,
+      });
+    } catch (err) {
+      setExportError(err.message || "Failed to export orders");
+    } finally {
+      setExporting(false);
+    }
   };
 
   const handleSaveStatus = async () => {
@@ -347,15 +372,32 @@ export default function OrdersPage() {
             View customer orders, add manual sales, and update status
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="btn btn-primary shrink-0 px-4 py-2.5 text-[0.68rem]"
-        >
-          <Plus {...iconProps(14)} />
-          Add Order
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={exporting}
+            className="btn btn-secondary shrink-0 px-4 py-2.5 text-[0.68rem] disabled:opacity-50"
+          >
+            <FileSpreadsheet {...iconProps(16)} />
+            {exporting ? "Preparing…" : "Export Excel"}
+          </button>
+          <button
+            type="button"
+            onClick={openCreate}
+            className="btn btn-primary shrink-0 px-4 py-2.5 text-[0.68rem]"
+          >
+            <Plus {...iconProps(14)} />
+            Add Order
+          </button>
+        </div>
       </div>
+
+      {exportError && (
+        <div className="mb-4 rounded-lg border border-terracotta-400/40 bg-terracotta-500/10 px-4 py-3 text-body-sm text-terracotta-600">
+          {exportError}
+        </div>
+      )}
 
       <div className="mb-4 space-y-3">
         <div className="flex flex-wrap gap-2">

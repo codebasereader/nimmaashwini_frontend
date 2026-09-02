@@ -1,4 +1,4 @@
-import { apiRequest } from "./client";
+import { apiDownload, apiRequest } from "./client";
 
 function buildQuery(params = {}) {
   const searchParams = new URLSearchParams();
@@ -13,6 +13,18 @@ function buildQuery(params = {}) {
 
 export function fetchAdminOrders(params = {}, token) {
   return apiRequest(`/admin/orders${buildQuery(params)}`, { token });
+}
+
+/**
+ * Server export — same filters as list. format: "xlsx".
+ * @see docs/ADMIN_ORDERS_EXPORT_SCHEMA.md
+ */
+export function downloadAdminOrdersExport(params = {}, token) {
+  const { format = "xlsx", ...filters } = params;
+  return apiDownload(`/admin/orders/export${buildQuery({ format, ...filters })}`, {
+    token,
+    fallbackFilename: `orders_export.${format}`,
+  });
 }
 
 export function fetchAdminOrderById(id, token) {
