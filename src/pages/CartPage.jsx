@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
+import Seo from "../components/Seo";
 import { useCart } from "../context/CartContext";
 import { getProductPath } from "../lib/product";
 import {
@@ -27,6 +28,7 @@ function CartLineItem({ item, onUpdateQuantity, onRemove }) {
           <img
             src={item.image}
             alt={item.name}
+            loading="lazy"
             className="h-24 w-24 object-contain p-2 sm:h-28 sm:w-28"
           />
         ) : (
@@ -115,6 +117,7 @@ export default function CartPage() {
 
   return (
     <div className="pb-16 sm:pb-20">
+      <Seo title="Your Cart" noindex />
       <div className="border-b border-cream-300/80 bg-cream-100/90 backdrop-blur-sm">
         <div className="container-ashwini py-4">
           <nav aria-label="Breadcrumb" className="text-body-sm text-brown-500">

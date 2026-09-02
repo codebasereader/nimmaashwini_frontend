@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import Seo from "../components/Seo";
 import {
   clearAuthError,
   loginUser,
@@ -40,6 +41,7 @@ export default function LoginPage() {
 
   return (
     <div className="grain-overlay relative flex min-h-screen items-center justify-center bg-cream-100 px-4 py-10">
+      <Seo title="Admin Login" noindex />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-60"

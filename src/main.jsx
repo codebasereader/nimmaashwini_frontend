@@ -1,6 +1,7 @@
 import { MotionConfig } from "motion/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
@@ -16,14 +17,16 @@ setUnauthorizedHandler(() => {
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Provider store={store}>
-      <MotionConfig reducedMotion="user">
-        <BrowserRouter>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </BrowserRouter>
-      </MotionConfig>
-    </Provider>
+    <HelmetProvider>
+      <Provider store={store}>
+        <MotionConfig reducedMotion="user">
+          <BrowserRouter>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </BrowserRouter>
+        </MotionConfig>
+      </Provider>
+    </HelmetProvider>
   </StrictMode>,
 );

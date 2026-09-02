@@ -167,12 +167,14 @@ export default function Footer() {
           src="/footerbg_anp.webp"
           alt=""
           aria-hidden="true"
+          loading="lazy"
           className="footer-contact-decor footer-contact-decor-top pointer-events-none absolute top-0 left-0 z-0 hidden h-[min(28vh,14rem)] w-auto max-w-[min(26vw,13rem)] object-contain object-top-left md:block lg:h-[min(32vh,16rem)] lg:max-w-[min(22vw,15rem)]"
         />
         <img
           src="/footerbg_anp.webp"
           alt=""
           aria-hidden="true"
+          loading="lazy"
           className="footer-contact-decor pointer-events-none absolute right-0 bottom-0 hidden h-[min(36vh,18rem)] w-auto max-w-[min(38vw,20rem)] object-contain object-right-bottom md:block lg:h-[min(40vh,22rem)] lg:max-w-[min(34vw,24rem)] hero-branches-decor"
         />
 
@@ -222,6 +224,7 @@ export default function Footer() {
                 <img
                   src="/anp_logo.webp"
                   alt="Nimma Ashwini Be Natural"
+                  loading="lazy"
                   className="h-full w-full object-contain"
                 />
               </Link>

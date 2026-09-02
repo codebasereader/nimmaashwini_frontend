@@ -7,6 +7,7 @@ import { ApiError } from "../api/client";
 import { validateCoupon } from "../api/coupons";
 import { createOrder } from "../api/orders";
 import AvailableCouponsModal from "../components/checkout/AvailableCouponsModal";
+import Seo from "../components/Seo";
 import { useCart } from "../context/CartContext";
 import { usePincodeAutofill } from "../hooks/usePincodeAutofill";
 import {
@@ -284,6 +285,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="pb-16 sm:pb-20">
+      <Seo title="Checkout" noindex />
       <div className="border-b border-cream-300/80 bg-cream-100/90 backdrop-blur-sm">
         <div className="container-ashwini py-4">
           <nav aria-label="Breadcrumb" className="text-body-sm text-brown-500">

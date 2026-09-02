@@ -257,6 +257,7 @@ function ZoomLightbox({
                 <img
                   src={thumb}
                   alt=""
+                  loading="lazy"
                   className="h-12 w-12 object-contain sm:h-14 sm:w-14"
                 />
               </button>
@@ -311,6 +312,7 @@ export default function ProductImageGallery({ images = [], alt }) {
                   <img
                     src={image}
                     alt=""
+                    loading="lazy"
                     className="h-14 w-14 object-contain sm:h-16 sm:w-16"
                   />
                 </motion.button>

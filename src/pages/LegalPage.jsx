@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import LeafMark from "../components/icons/LeafMark";
+import Seo from "../components/Seo";
 import { LEGAL_NAV, LEGAL_PAGES } from "../data/legalPages";
 
 export default function LegalPage({ pageKey }) {
@@ -14,6 +15,7 @@ export default function LegalPage({ pageKey }) {
 
   return (
     <div className="pb-16 sm:pb-20">
+      <Seo title={page.title} description={page.intro} />
       <section className="product-hero-bg relative overflow-hidden">
         <div className="container-ashwini section-padding">
           <div className="mx-auto max-w-3xl">

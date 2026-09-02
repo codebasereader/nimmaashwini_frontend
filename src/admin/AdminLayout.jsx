@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import Seo from "../components/Seo";
 import {
   AdminSidebar,
   CONTENT_COLLAPSED_PL,
@@ -11,6 +12,7 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-cream-100">
+      <Seo title="Admin" noindex />
       <AdminSidebar collapsed={collapsed} onToggle={toggle} />
       <div
         className={`min-h-screen transition-[padding] duration-200 ease-out ${

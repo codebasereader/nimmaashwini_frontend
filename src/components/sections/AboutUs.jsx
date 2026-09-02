@@ -40,6 +40,8 @@ function SideDecor({ side }) {
       <img
         src={isLeft ? "/traditionalleft_anp.webp" : "/traditionright_anp.webp"}
         alt=""
+        loading="lazy"
+        decoding="async"
         className={`h-full w-full object-cover ${
           isLeft
             ? "why-choose-side-decor object-left"
@@ -152,6 +154,7 @@ export default function AboutUs() {
                 alt="A woman in traditional attire surrounded by Natural herbs and natural ingredients"
                 width={640}
                 height={640}
+                loading="lazy"
                 className="hero-image-blend aspect-square w-full object-contain object-center"
                 decoding="async"
               />

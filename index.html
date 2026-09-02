@@ -4,7 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/anp_logo_face.webp" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nimma Ashwini</title>
+    <meta name="theme-color" content="#3f3223" />
+    <!--
+      Static fallback tags for non-JS crawlers (Bing, social-share bots) and
+      the brief pre-hydration paint. react-helmet-async replaces these with
+      per-page tags at runtime — see src/components/Seo.jsx. Kept in sync
+      manually with src/lib/seoConfig.js defaults.
+    -->
+    <title data-seo-default>Nimma Ashwini | Traditional Natural Hair & Wellness Care</title>
+    <meta
+      data-seo-default
+      name="description"
+      content="Nimma Ashwini crafts traditional, small-batch natural hair oils, herbal shampoos, and ragi malt using temple-grade herbs and time-honoured recipes. Natural, cruelty-free, made in India."
+    />
+    <meta data-seo-default property="og:type" content="website" />
+    <meta data-seo-default property="og:site_name" content="Nimma Ashwini" />
+    <meta data-seo-default property="og:title" content="Nimma Ashwini | Traditional Natural Hair & Wellness Care" />
+    <meta
+      data-seo-default
+      property="og:description"
+      content="Traditional, small-batch natural hair oils, herbal shampoos, and ragi malt made with temple-grade herbs."
+    />
+    <meta data-seo-default property="og:image" content="https://nimmaashwini.com/anp_logo.webp" />
+    <meta data-seo-default name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

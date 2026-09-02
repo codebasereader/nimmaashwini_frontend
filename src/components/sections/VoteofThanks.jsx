@@ -64,6 +64,8 @@ export default function VoteofThanks() {
                   alt="The founders of Nimma Ashwini, smiling warmly"
                   width={900}
                   height={1125}
+                  loading="lazy"
+                  decoding="async"
                   className="aspect-[4/5] w-full object-cover object-center"
                   decoding="async"
                 />

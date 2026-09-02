@@ -4,6 +4,7 @@ import { CheckCircle2, Leaf, Package, MapPin, Phone } from "lucide-react";
 import { ApiError } from "../api/client";
 import { fetchOrderConfirmation } from "../api/orders";
 import LeafMark from "../components/icons/LeafMark";
+import Seo from "../components/Seo";
 import { useCart } from "../context/CartContext";
 import { iconProps } from "../lib/icons";
 import {
@@ -76,6 +77,7 @@ export default function PaymentSuccessPage() {
 
   return (
     <div className="pb-16 sm:pb-20">
+      <Seo title="Order Confirmed" noindex />
       <section className="product-hero-bg section-padding">
         <div className="container-ashwini">
           <div className="mx-auto max-w-3xl">

@@ -51,6 +51,8 @@ function SideDecor({ side }) {
       <img
         src={isLeft ? "/traditionalleft_anp.webp" : "/traditionright_anp.webp"}
         alt=""
+        loading="lazy"
+        decoding="async"
         className={`h-full w-full object-cover ${
           isLeft
             ? "why-choose-side-decor object-left"
@@ -76,6 +78,7 @@ function PillarCard({ pillar, index }) {
         <img
           src={pillar.image}
           alt=""
+          loading="lazy"
           className="relative z-10 h-14 w-14 object-contain sm:h-16 sm:w-16"
         />
       </motion.div>

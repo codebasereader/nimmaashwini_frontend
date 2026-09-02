@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /cart
+Disallow: /checkout
+Disallow: /payment-success
+Disallow: /payment-failure
+
+Sitemap: https://nimmaashwini.com/sitemap.xml

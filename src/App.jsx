@@ -27,6 +27,7 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import PaymentFailurePage from "./pages/PaymentFailurePage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function isStandaloneRoute(pathname) {
   return pathname === "/login" || pathname.startsWith("/admin");
@@ -154,6 +155,14 @@ const App = () => {
         element={
           <AppLayout>
             <LegalPage pageKey="shipping" />
+          </AppLayout>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <AppLayout>
+            <NotFoundPage />
           </AppLayout>
         }
       />

@@ -8,6 +8,25 @@ import Reviews from "../components/sections/Reviews";
 import VoteofThanks from "../components/sections/VoteofThanks";
 import WhyChoose from "../components/sections/WhyChoose";
 import Youtube from "../components/sections/Youtube";
+import Seo from "../components/Seo";
+import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from "../lib/seoConfig";
+
+const HOME_JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: DEFAULT_OG_IMAGE,
+    description: DEFAULT_DESCRIPTION,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+  },
+];
 
 export default function HomePage() {
   const { hash } = useLocation();
@@ -25,6 +44,7 @@ export default function HomePage() {
 
   return (
     <>
+      <Seo path="/" jsonLd={HOME_JSON_LD} />
       <Hero />
       <AboutUs />
       <Products />

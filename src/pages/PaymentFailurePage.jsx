@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
 import { ApiError } from "../api/client";
 import { fetchOrderConfirmation, retryOrderPayment } from "../api/orders";
+import Seo from "../components/Seo";
 import {
   buildWhatsAppUrl,
   WHATSAPP_DISPLAY,
@@ -70,6 +71,7 @@ export default function PaymentFailurePage() {
 
   return (
     <div className="pb-16 sm:pb-20">
+      <Seo title="Payment Failed" noindex />
       <section className="product-hero-bg section-padding">
         <div className="container-ashwini">
           <div className="product-info-panel mx-auto max-w-lg p-8 text-center sm:p-10">

@@ -51,7 +51,7 @@ const BENEFITS = [
   {
     heading: "Amla & Bhringraj Care",
     description:
-      "Classic Ayurvedic herbs Amla and Bhringraj support thicker-feeling strands and natural hair vitality.",
+      "Classic Natural herbs Amla and Bhringraj support thicker-feeling strands and natural hair vitality.",
   },
   {
     heading: "18+ Herbal Ingredients",

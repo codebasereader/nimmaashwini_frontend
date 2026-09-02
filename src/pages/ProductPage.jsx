@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Star } from "lucide-react";
 import { fetchProductBySlug } from "../api/products";
+import Seo from "../components/Seo";
+import { absoluteUrl } from "../lib/seoConfig";
 import ProductImageGallery from "../components/product/ProductImageGallery";
 import ProductCustomerReviews from "../components/product/ProductCustomerReviews";
 import ProductMakingVideos, {
@@ -13,7 +15,7 @@ import ProductSocialProof from "../components/product/ProductSocialProof";
 import TraditionalSectionDecor from "../components/product/TraditionalSectionDecor";
 import LeafMark from "../components/icons/LeafMark";
 import { useCart } from "../context/CartContext";
-import { isMultigrainMaltSlug, normalizeProduct } from "../lib/product";
+import { getProductPath, isMultigrainMaltSlug, normalizeProduct } from "../lib/product";
 import { iconProps } from "../lib/icons";
 import {
   defaultTransition,
@@ -143,6 +145,7 @@ function ProductLoading() {
 function ProductNotFound() {
   return (
     <div className="container-ashwini py-24 text-center">
+      <Seo title="Product Not Found" noindex />
       <h1 className="font-display text-3xl text-brown-900">Product not found</h1>
       <p className="mt-3 text-body-sm text-brown-600">
         The product you are looking for may have been moved or is no longer available.
@@ -294,8 +297,52 @@ export default function ProductPage() {
     navigate(uniqueProducts > 1 ? "/cart" : "/checkout");
   };
 
+  const productPath = getProductPath(product.slug);
+  const metaDescription = product.tagline || product.description?.slice(0, 160) || undefined;
+  const productJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      description: product.description || product.tagline,
+      image: product.images?.map((src) => absoluteUrl(src)),
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "INR",
+        price: product.price,
+        availability: "https://schema.org/InStock",
+        url: absoluteUrl(productPath),
+      },
+      ...(hasReviews
+        ? {
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: avgRating.toFixed(1),
+              reviewCount: product.reviews.length,
+            },
+          }
+        : {}),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: product.name, item: absoluteUrl(productPath) },
+      ],
+    },
+  ];
+
   return (
     <div className="pb-16 sm:pb-20">
+      <Seo
+        title={product.name}
+        description={metaDescription}
+        path={productPath}
+        image={product.images?.[0] ? absoluteUrl(product.images[0]) : undefined}
+        type="product"
+        jsonLd={productJsonLd}
+      />
       <div className="border-b border-cream-300/80 bg-cream-100/90 backdrop-blur-sm">
         <div className="container-ashwini py-4">
           <nav aria-label="Breadcrumb" className="text-body-sm text-brown-500">

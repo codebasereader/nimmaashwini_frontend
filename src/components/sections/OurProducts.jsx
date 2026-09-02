@@ -174,6 +174,7 @@ function ProductsBranchDecor({ side }) {
       <img
         src="/branchesbg_anp.webp"
         alt=""
+        loading="lazy"
         className={`products-branches-decor h-[min(38vh,20rem)] w-auto max-w-[min(36vw,18rem)] object-contain lg:h-[min(42vh,24rem)] lg:max-w-[min(32vw,22rem)] ${
           isLeft ? "object-bottom-left" : "scale-x-[-1] object-bottom-right"
         }`}
