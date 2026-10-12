@@ -22,6 +22,7 @@ import {
   formatINR,
   normalizeCouponCode,
 } from "../lib/coupon";
+import { TESTING_MODE } from "../lib/siteNotice";
 import { buildOrderPayload, validateCheckoutForm } from "../lib/order";
 import {
   defaultTransition,
@@ -234,7 +235,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isInternational || items.length === 0) return;
+    if (TESTING_MODE || isInternational || items.length === 0) return;
 
     const validationErrors = validateCheckoutForm(form, { isInternational });
     if (Object.keys(validationErrors).length > 0) {
@@ -503,13 +504,15 @@ export default function CheckoutPage() {
 
                   <motion.button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || TESTING_MODE}
                     className="btn btn-primary focus-ring w-full px-6 py-3.5 disabled:opacity-60"
                     whileHover={{ scale: submitting ? 1 : 1.02 }}
                     whileTap={{ scale: submitting ? 1 : 0.98 }}
                     transition={springSnappy}
                   >
-                    {submitting
+                    {TESTING_MODE
+                      ? "Payments disabled (testing mode)"
+                      : submitting
                       ? "Redirecting to Payment..."
                       : `Pay ${totalDisplay}`}
                   </motion.button>

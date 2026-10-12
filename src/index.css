@@ -924,6 +924,28 @@
   }
 }
 
+@utility notice-marquee-track {
+  animation: notice-marquee 30s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes notice-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* ─── Product detail page ───────────────────────────────────────────────────── */
 
 @utility product-gallery-main {
