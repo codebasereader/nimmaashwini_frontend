@@ -12,7 +12,6 @@ import productsReducer from "./slices/productsSlice";
 import vendorsReducer from "./slices/vendorsSlice";
 import customersReducer from "./slices/customersSlice";
 import invoiceSettingsReducer from "./slices/invoiceSettingsSlice";
-import couponsReducer from "./slices/couponsSlice";
 
 const store = configureStore({
   reducer: {
@@ -29,7 +28,6 @@ const store = configureStore({
     gstr1: gstr1Reducer,
     customers: customersReducer,
     invoiceSettings: invoiceSettingsReducer,
-    coupons: couponsReducer,
   },
 });
 

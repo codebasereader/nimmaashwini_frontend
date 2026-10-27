@@ -15,7 +15,7 @@ When PhonePe payment fails or is cancelled, the user lands on:
 /payment-failure?merchantOrderId={orderId}
 ```
 
-**Try Again** must restart payment for the **same order** (same customer, items, coupon, totals) and open a new PhonePe `checkoutPageUrl`.
+**Try Again** must restart payment for the **same order** (same customer, items, totals) and open a new PhonePe `checkoutPageUrl`.
 
 It must **not** send the user back to `/checkout` to create a second order (duplicate orders + double stock reservation).
 
@@ -108,7 +108,7 @@ Example:
 1. Load order by `merchantOrderId` (= order `id`).
 2. Allow retry only when `paymentStatus` is **not** `COMPLETED` (allow `FAILED`, `initiated`, and similar unpaid states) and order is not in a terminal cancelled/paid-confirmed state.
 3. **Do not** create a new order document.
-4. **Do not** change line items, customer, coupon, or `totalAmount` (use existing payable amount, including any `discountAmount`).
+4. **Do not** change line items, customer, or `totalAmount`.
 5. **Do not** decrement (or increment) stock again for a normal retry.
 6. Create a **new PhonePe payment session** for `order.totalAmount` (and currency).
 7. Persist whatever PhonePe merchant/transaction refs you need for the new session (overwrite or append history — your choice; check-status must still resolve this `merchantOrderId`).

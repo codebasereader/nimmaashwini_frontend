@@ -1,12 +1,10 @@
 import { ChevronDown } from "lucide-react";
 import { iconProps } from "../lib/icons";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { ApiError } from "../api/client";
-import { validateCoupon } from "../api/coupons";
 import { createOrder } from "../api/orders";
-import AvailableCouponsModal from "../components/checkout/AvailableCouponsModal";
 import Seo from "../components/Seo";
 import { useCart } from "../context/CartContext";
 import { usePincodeAutofill } from "../hooks/usePincodeAutofill";
@@ -17,11 +15,6 @@ import {
   DOMESTIC_COUNTRY,
   WHATSAPP_DISPLAY,
 } from "../lib/checkout";
-import {
-  cartItemsToValidatePayload,
-  formatINR,
-  normalizeCouponCode,
-} from "../lib/coupon";
 import { TESTING_MODE } from "../lib/siteNotice";
 import { buildOrderPayload, validateCheckoutForm } from "../lib/order";
 import {
@@ -125,22 +118,8 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [couponError, setCouponError] = useState("");
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [availableOpen, setAvailableOpen] = useState(false);
 
   const isInternational = form.country !== DOMESTIC_COUNTRY;
-
-  const discountAmount = Number(appliedCoupon?.discountAmount) || 0;
-  const totalPayable = Math.max(0, (Number(subtotal) || 0) - discountAmount);
-  const totalDisplay = formatINR(totalPayable);
-
-  useEffect(() => {
-    setAppliedCoupon(null);
-    setCouponError("");
-  }, [items]);
 
   const updateField = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -165,74 +144,6 @@ export default function CheckoutPage() {
     onResolved: handlePincodeResolved,
   });
 
-  const applyCouponCode = useCallback(
-    async (rawCode) => {
-      const code = normalizeCouponCode(rawCode);
-      if (!code) {
-        setCouponError("Enter a coupon code");
-        return false;
-      }
-
-      setCouponLoading(true);
-      setCouponError("");
-
-      try {
-        const data = await validateCoupon({
-          code,
-          items: cartItemsToValidatePayload(items),
-        });
-
-        if (!data?.valid) {
-          setAppliedCoupon(null);
-          setCouponError(data?.message || "This coupon is not valid");
-          return false;
-        }
-
-        const amount = Number(data.discountAmount) || 0;
-        if (amount <= 0) {
-          setAppliedCoupon(null);
-          setCouponError(
-            data?.message || "This coupon has no discount for your cart",
-          );
-          return false;
-        }
-
-        setAppliedCoupon({
-          code: normalizeCouponCode(data.code || code),
-          discountAmount: amount,
-          discountType: data.discountType,
-          discountValue: data.discountValue,
-          message: data.message,
-        });
-        setCouponInput(normalizeCouponCode(data.code || code));
-        setCouponError("");
-        return true;
-      } catch (error) {
-        setAppliedCoupon(null);
-        setCouponError(error.message || "Unable to validate coupon");
-        return false;
-      } finally {
-        setCouponLoading(false);
-      }
-    },
-    [items],
-  );
-
-  const handleApplyCoupon = () => {
-    applyCouponCode(couponInput);
-  };
-
-  const handleSelectAvailableCoupon = async (code) => {
-    const ok = await applyCouponCode(code);
-    if (ok) setAvailableOpen(false);
-  };
-
-  const handleClearCoupon = () => {
-    setAppliedCoupon(null);
-    setCouponInput("");
-    setCouponError("");
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (TESTING_MODE || isInternational || items.length === 0) return;
@@ -247,14 +158,7 @@ export default function CheckoutPage() {
     setSubmitError("");
 
     try {
-      const coupon =
-        appliedCoupon?.code && Number(appliedCoupon.discountAmount) > 0
-          ? {
-              code: appliedCoupon.code,
-              discountAmount: appliedCoupon.discountAmount,
-            }
-          : null;
-      const payload = buildOrderPayload(items, form, subtotal, coupon);
+      const payload = buildOrderPayload(items, form, subtotal);
       const data = await createOrder(payload);
 
       if (!data?.checkoutPageUrl) {
@@ -331,20 +235,6 @@ export default function CheckoutPage() {
               items={items}
               itemCount={itemCount}
               subtotalDisplay={subtotalDisplay}
-              payableDisplay={totalDisplay}
-              discountDisplay={formatINR(discountAmount)}
-              appliedCoupon={appliedCoupon}
-              couponInput={couponInput}
-              couponError={couponError}
-              couponLoading={couponLoading}
-              showCoupon={!isInternational}
-              onCouponInputChange={(value) => {
-                setCouponInput(value.toUpperCase().replace(/\s+/g, ""));
-                setCouponError("");
-              }}
-              onApplyCoupon={handleApplyCoupon}
-              onClearCoupon={handleClearCoupon}
-              onViewAvailable={() => setAvailableOpen(true)}
             />
 
             <motion.div
@@ -514,7 +404,7 @@ export default function CheckoutPage() {
                       ? "Payments disabled (testing mode)"
                       : submitting
                       ? "Redirecting to Payment..."
-                      : `Pay ${totalDisplay}`}
+                      : `Pay ${subtotalDisplay}`}
                   </motion.button>
                 </form>
               )}
@@ -522,14 +412,6 @@ export default function CheckoutPage() {
           </div>
         </motion.div>
       </section>
-
-      <AvailableCouponsModal
-        open={availableOpen}
-        onClose={() => setAvailableOpen(false)}
-        cartItems={items}
-        onSelect={handleSelectAvailableCoupon}
-        selecting={couponLoading}
-      />
     </div>
   );
 }
@@ -557,34 +439,12 @@ function CheckoutSummary({
   items,
   itemCount,
   subtotalDisplay,
-  couponInput,
-  onCouponInputChange,
-  onApplyCoupon,
-  onClearCoupon,
-  onViewAvailable,
-  couponLoading,
-  couponError,
-  appliedCoupon,
-  discountDisplay,
-  payableDisplay,
-  showCoupon,
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const summaryProps = {
     items,
     itemCount,
     subtotalDisplay,
-    couponInput,
-    onCouponInputChange,
-    onApplyCoupon,
-    onClearCoupon,
-    onViewAvailable,
-    couponLoading,
-    couponError,
-    appliedCoupon,
-    discountDisplay,
-    payableDisplay,
-    showCoupon,
   };
 
   return (
@@ -605,7 +465,7 @@ function CheckoutSummary({
           </h2>
           <p className="mt-0.5 text-body-sm text-brown-600">
             {itemCount} item{itemCount !== 1 ? "s" : ""} ·{" "}
-            {appliedCoupon ? payableDisplay : subtotalDisplay}
+            {subtotalDisplay}
           </p>
         </div>
         <ChevronIcon open={mobileOpen} />
@@ -643,17 +503,6 @@ function CheckoutSummaryContent({
   items,
   itemCount,
   subtotalDisplay,
-  couponInput,
-  onCouponInputChange,
-  onApplyCoupon,
-  onClearCoupon,
-  onViewAvailable,
-  couponLoading,
-  couponError,
-  appliedCoupon,
-  discountDisplay,
-  payableDisplay,
-  showCoupon,
 }) {
   return (
     <>
@@ -675,89 +524,17 @@ function CheckoutSummaryContent({
         ))}
       </ul>
 
-      {showCoupon ? (
-        <div className="mt-4 space-y-2 border-b border-cream-300 pb-4">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-caption font-semibold tracking-[0.14em] text-olive-800 uppercase">
-              Coupon
-            </p>
-            {!appliedCoupon ? (
-              <button
-                type="button"
-                onClick={onViewAvailable}
-                className="focus-ring text-[0.65rem] font-semibold tracking-wider text-olive-800 uppercase hover:text-olive-950"
-              >
-                View available
-              </button>
-            ) : null}
-          </div>
-          {appliedCoupon ? (
-            <div className="flex items-start justify-between gap-3 rounded-md border border-olive-200 bg-olive-50/80 px-3 py-2.5">
-              <div className="min-w-0">
-                <p className="font-mono text-body-sm font-semibold tracking-wide text-olive-900">
-                  {appliedCoupon.code}
-                </p>
-                <p className="mt-0.5 text-xs text-olive-700">
-                  {appliedCoupon.message || "Coupon applied"}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={onClearCoupon}
-                className="focus-ring shrink-0 text-[0.65rem] font-semibold tracking-wider text-terracotta-600 uppercase hover:text-terracotta-700"
-              >
-                Remove
-              </button>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                className={inputClassName("font-mono tracking-wider")}
-                value={couponInput}
-                onChange={(e) => onCouponInputChange(e.target.value)}
-                placeholder="Enter code"
-                autoComplete="off"
-                disabled={couponLoading}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onApplyCoupon();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={onApplyCoupon}
-                disabled={couponLoading || !couponInput.trim()}
-                className="btn btn-primary shrink-0 px-4 py-2.5 text-[0.68rem] disabled:opacity-60"
-              >
-                {couponLoading ? "..." : "Apply"}
-              </button>
-            </div>
-          )}
-          {couponError ? (
-            <p className="text-xs text-terracotta-600">{couponError}</p>
-          ) : null}
-        </div>
-      ) : null}
-
       <dl className="mt-4 space-y-3 text-body-sm">
         <div className="flex items-center justify-between text-brown-600">
           <dt>Items ({itemCount})</dt>
           <dd className="font-medium text-brown-800">{subtotalDisplay}</dd>
         </div>
-        {appliedCoupon && Number(appliedCoupon.discountAmount) > 0 ? (
-          <div className="flex items-center justify-between text-olive-800">
-            <dt>Discount ({appliedCoupon.code})</dt>
-            <dd className="font-medium">−{discountDisplay}</dd>
-          </div>
-        ) : null}
         <div className="flex items-center justify-between border-t border-cream-300 pt-3">
           <dt className="font-display text-base font-semibold text-brown-900">
-            {appliedCoupon ? "Total" : "Subtotal"}
+            Subtotal
           </dt>
           <dd className="font-display text-xl font-semibold text-olive-800">
-            {appliedCoupon ? payableDisplay : subtotalDisplay}
+            {subtotalDisplay}
           </dd>
         </div>
       </dl>

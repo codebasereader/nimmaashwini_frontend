@@ -150,10 +150,6 @@ Cart icon in header links to `/cart`.
 
 ---
 
-## Coupons
-
-Apply coupons on **checkout** (not on the cart page). Validate via `POST /api/coupons/validate`, then send `couponCode` on `POST /api/orders`. Full contract: [COUPON_SCHEMA.md](./COUPON_SCHEMA.md).
-
 ## Future extensions (optional)
 
 | Feature | Notes |

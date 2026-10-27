@@ -1,11 +1,37 @@
 /**
  * Shared invoice / order number helpers.
- * Format: NA-YYYY-NNNNN (see docs/INVOICE_NUMBER_SCHEMA.md)
+ * Format: MON-YY-NNNN, e.g. OCT-26-9176 (see docs/INVOICE_NUMBER_SCHEMA.md)
+ * MON-YY is the issuing month/year; admins only edit the trailing number.
  */
 
-export const INVOICE_NUMBER_REGEX = /^NA-\d{4}-\d{5}$/;
+const MONTHS = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
 
-export const INVOICE_NUMBER_FORMAT_HINT = "NA-YYYY-NNNNN (e.g. NA-2026-00001)";
+export const MAX_SEQUENCE_DIGITS = 9;
+
+export const INVOICE_NUMBER_REGEX = new RegExp(
+  `^(${MONTHS.join("|")})-[0-9]{2}-[0-9]{1,${MAX_SEQUENCE_DIGITS}}$`,
+);
+
+export const INVOICE_NUMBER_FORMAT_HINT = "MON-YY-NNNN (e.g. OCT-26-9176)";
+
+/** "OCT-26-" for the given date (defaults to now). */
+export function getInvoicePrefix(date = new Date()) {
+  const year = String(date.getFullYear()).slice(-2);
+  return `${MONTHS[date.getMonth()]}-${year}-`;
+}
 
 export function isValidInvoiceNumber(value) {
   return INVOICE_NUMBER_REGEX.test(String(value || "").trim());
@@ -18,39 +44,42 @@ export function normalizeInvoiceNumberInput(value) {
 }
 
 /**
- * Parse a valid invoice number into parts.
- * @returns {{ prefix: string, year: number, sequence: number, padded: string } | null}
+ * Split a valid invoice number into its parts.
+ * @returns {{ month: string, year: number, sequence: number, prefix: string } | null}
  */
 export function parseInvoiceNumber(value) {
   const normalized = normalizeInvoiceNumberInput(value);
   if (!INVOICE_NUMBER_REGEX.test(normalized)) return null;
-  const [, yearStr, seqStr] = normalized.match(/^NA-(\d{4})-(\d{5})$/) || [];
+  const [month, yearStr, seqStr] = normalized.split("-");
   return {
-    prefix: "NA",
-    year: Number(yearStr),
+    month,
+    year: 2000 + Number(yearStr),
     sequence: Number(seqStr),
-    padded: seqStr,
+    prefix: `${month}-${yearStr}-`,
   };
 }
 
-export function formatInvoiceNumber(year, sequence, padding = 5) {
-  const y = Number(year);
+export function formatInvoiceNumber(sequence, date = new Date()) {
   const seq = Number(sequence);
-  if (!Number.isInteger(y) || y < 1000 || y > 9999) return null;
-  if (!Number.isInteger(seq) || seq < 1 || seq > 99999) return null;
-  return `NA-${y}-${String(seq).padStart(padding, "0")}`;
+  if (!Number.isInteger(seq) || seq < 1) return null;
+  if (String(seq).length > MAX_SEQUENCE_DIGITS) return null;
+  return `${getInvoicePrefix(date)}${seq}`;
 }
 
-export function validateNextInvoiceNumber(value) {
-  const normalized = normalizeInvoiceNumberInput(value);
-  if (!normalized) {
-    return { ok: false, message: "Next invoice number is required." };
+/** Validate the digits the admin typed after the fixed MON-YY- prefix. */
+export function validateNextInvoiceSequence(value, date = new Date()) {
+  const digits = String(value || "").trim();
+  if (!digits) {
+    return { ok: false, message: "Invoice number is required." };
   }
-  if (!INVOICE_NUMBER_REGEX.test(normalized)) {
+  if (!/^\d+$/.test(digits) || Number(digits) < 1) {
+    return { ok: false, message: "Enter a whole number greater than 0." };
+  }
+  if (digits.length > MAX_SEQUENCE_DIGITS) {
     return {
       ok: false,
-      message: `Invoice number must match ${INVOICE_NUMBER_FORMAT_HINT}.`,
+      message: `Invoice number can have at most ${MAX_SEQUENCE_DIGITS} digits.`,
     };
   }
-  return { ok: true, value: normalized };
+  return { ok: true, value: `${getInvoicePrefix(date)}${Number(digits)}` };
 }

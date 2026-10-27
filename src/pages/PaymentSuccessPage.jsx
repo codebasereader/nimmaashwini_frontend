@@ -171,11 +171,6 @@ export default function PaymentSuccessPage() {
                         currency,
                       )}
                     </p>
-                    {order.couponCode && Number(order.discountAmount) > 0 ? (
-                      <p className="mt-1 text-body-sm text-olive-700">
-                        Coupon {String(order.couponCode).toUpperCase()} applied
-                      </p>
-                    ) : null}
                   </DetailBlock>
                 </div>
 
@@ -249,19 +244,6 @@ export default function PaymentSuccessPage() {
                       )}
                     </span>
                   </div>
-                  {Number(order.discountAmount) > 0 ? (
-                    <div className="flex justify-between text-olive-800">
-                      <span>
-                        Discount
-                        {order.couponCode
-                          ? ` (${String(order.couponCode).toUpperCase()})`
-                          : ""}
-                      </span>
-                      <span>
-                        −{formatOrderMoney(order.discountAmount, currency)}
-                      </span>
-                    </div>
-                  ) : null}
                   <div className="flex justify-between border-t border-cream-300 pt-3 font-display text-lg font-semibold text-brown-900">
                     <span>Total paid</span>
                     <span className="text-olive-800">

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FileSpreadsheet, Plus, Search } from "lucide-react";
+import { FileSpreadsheet, Plus, Printer, Search } from "lucide-react";
 import {
   clearAdminOrderDetail,
   clearAdminOrderErrors,
@@ -18,6 +18,7 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import DateRangeFilter from "../../components/DateRangeFilter";
 import OrderDetailDrawer from "./OrderDetailDrawer";
 import OrderFormDrawer from "./OrderFormDrawer";
+import OrderLabelModal from "./OrderLabelModal";
 import { formatINR } from "./orderMath";
 
 const ORDER_STATUSES = [
@@ -128,6 +129,37 @@ export default function OrdersPage() {
   const [pendingStatus, setPendingStatus] = useState(null);
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState(null);
+  // Selection survives page changes and filters, keyed by order id.
+  const [selectedOrders, setSelectedOrders] = useState({});
+  const [labelBatch, setLabelBatch] = useState(null);
+
+  const selectedCount = Object.keys(selectedOrders).length;
+  const allOnPageSelected =
+    items.length > 0 && items.every((row) => selectedOrders[row.id]);
+
+  const toggleOrder = (row) => {
+    setSelectedOrders((prev) => {
+      const next = { ...prev };
+      if (next[row.id]) delete next[row.id];
+      else next[row.id] = row;
+      return next;
+    });
+  };
+
+  const togglePage = () => {
+    setSelectedOrders((prev) => {
+      const next = { ...prev };
+      items.forEach((row) => {
+        if (allOnPageSelected) delete next[row.id];
+        else next[row.id] = row;
+      });
+      return next;
+    });
+  };
+
+  const openLabels = (orders) => {
+    setLabelBatch({ orders, printDate: new Date() });
+  };
 
   const listParams = useMemo(
     () => ({
@@ -286,6 +318,29 @@ export default function OrdersPage() {
 
   const columns = [
     {
+      key: "select",
+      className: "w-10",
+      label: (
+        <input
+          type="checkbox"
+          checked={allOnPageSelected}
+          onChange={togglePage}
+          aria-label="Select all orders on this page"
+          className="size-4 cursor-pointer accent-olive-800"
+        />
+      ),
+      render: (row) => (
+        <input
+          type="checkbox"
+          checked={Boolean(selectedOrders[row.id])}
+          onChange={() => toggleOrder(row)}
+          onClick={(event) => event.stopPropagation()}
+          aria-label={`Select order ${row.orderNumber || ""}`}
+          className="size-4 cursor-pointer accent-olive-800"
+        />
+      ),
+    },
+    {
       key: "orderNumber",
       label: "Order #",
       render: (row) => (
@@ -357,6 +412,17 @@ export default function OrdersPage() {
           >
             Edit Status
           </button>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              openLabels([row]);
+            }}
+            className="focus-ring inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 text-[0.65rem] font-semibold tracking-wider text-terracotta-600 uppercase hover:bg-cream-200"
+          >
+            <Printer {...iconProps(13)} />
+            Label
+          </button>
         </div>
       ),
     },
@@ -373,6 +439,25 @@ export default function OrdersPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {selectedCount > 0 && (
+            <>
+              <button
+                type="button"
+                onClick={() => setSelectedOrders({})}
+                className="focus-ring rounded-sm px-3 py-2 text-[0.68rem] font-semibold tracking-wider text-brown-600 uppercase hover:bg-cream-200"
+              >
+                Clear ({selectedCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => openLabels(Object.values(selectedOrders))}
+                className="btn btn-secondary shrink-0 px-4 py-2.5 text-[0.68rem]"
+              >
+                <Printer {...iconProps(16)} />
+                Print Labels ({selectedCount})
+              </button>
+            </>
+          )}
           <button
             type="button"
             onClick={handleExport}
@@ -525,6 +610,11 @@ export default function OrdersPage() {
         mutationError={mutationError}
       />
 
+      <OrderLabelModal
+        orders={labelBatch?.orders}
+        printDate={labelBatch?.printDate}
+        onClose={() => setLabelBatch(null)}
+      />
       <OrderFormDrawer
         key={formKey}
         open={formOpen}

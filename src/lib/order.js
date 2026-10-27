@@ -5,16 +5,12 @@ import {
   TAX_TYPE_CGST_SGST,
   TAX_TYPE_IGST,
 } from "./gst";
-import { normalizeCouponCode } from "./coupon";
 
 /**
  * Build checkout / public order payload with GST place-of-supply split.
  * Catalog prices are GST-inclusive (5%) — tax is extracted, never added.
- *
- * @param {object} [coupon] - Applied coupon from validate: { code, discountAmount }
- *   When present, order-level tax is recomputed from payable (post-discount) total.
  */
-export function buildOrderPayload(cartItems, customer, subtotal, coupon = null) {
+export function buildOrderPayload(cartItems, customer, subtotal) {
   const state = customer.state?.trim() || "";
   const items = cartItems.map((item) => {
     const quantity = Number(item.quantity) || 0;
@@ -51,71 +47,32 @@ export function buildOrderPayload(cartItems, customer, subtotal, coupon = null) 
   const linesSubtotal = round2(
     items.reduce((sum, line) => sum + (Number(line.lineTotal) || 0), 0),
   );
-  const preDiscountSubtotal = linesSubtotal || round2(subtotal);
+  const orderSubtotal = linesSubtotal || round2(subtotal);
 
-  const couponCode = normalizeCouponCode(coupon?.code);
-  let discountAmount = 0;
-  if (couponCode && Number(coupon?.discountAmount) > 0) {
-    discountAmount = round2(
-      Math.min(Number(coupon.discountAmount), preDiscountSubtotal),
-    );
-  }
+  const taxableAmount = round2(
+    items.reduce((sum, line) => sum + (Number(line.taxable) || 0), 0),
+  );
+  const taxAmount = round2(
+    items.reduce((sum, line) => sum + (Number(line.taxAmount) || 0), 0),
+  );
+  const cgstAmount = round2(
+    items.reduce((sum, line) => sum + (Number(line.cgstAmount) || 0), 0),
+  );
+  const sgstAmount = round2(
+    items.reduce((sum, line) => sum + (Number(line.sgstAmount) || 0), 0),
+  );
+  const igstAmount = round2(
+    items.reduce((sum, line) => sum + (Number(line.igstAmount) || 0), 0),
+  );
+  const taxType =
+    igstAmount > 0 && cgstAmount === 0 && sgstAmount === 0
+      ? TAX_TYPE_IGST
+      : TAX_TYPE_CGST_SGST;
+  const sample =
+    items[0] || splitGstByPlaceOfSupply(0, DEFAULT_TAX_RATE, { state });
+  const { cgstRate, sgstRate, igstRate } = sample;
 
-  const payable = round2(Math.max(0, preDiscountSubtotal - discountAmount));
-
-  let taxableAmount;
-  let taxAmount;
-  let cgstAmount;
-  let sgstAmount;
-  let igstAmount;
-  let taxType;
-  let cgstRate;
-  let sgstRate;
-  let igstRate;
-
-  if (discountAmount > 0) {
-    const orderGst = calcInclusiveGstBreakdown({
-      inclusiveAmount: payable,
-      taxRate: DEFAULT_TAX_RATE,
-      state,
-    });
-    taxableAmount = orderGst.taxable;
-    taxAmount = orderGst.taxAmount;
-    cgstAmount = orderGst.cgstAmount;
-    sgstAmount = orderGst.sgstAmount;
-    igstAmount = orderGst.igstAmount;
-    taxType = orderGst.taxType;
-    cgstRate = orderGst.cgstRate;
-    sgstRate = orderGst.sgstRate;
-    igstRate = orderGst.igstRate;
-  } else {
-    taxableAmount = round2(
-      items.reduce((sum, line) => sum + (Number(line.taxable) || 0), 0),
-    );
-    taxAmount = round2(
-      items.reduce((sum, line) => sum + (Number(line.taxAmount) || 0), 0),
-    );
-    cgstAmount = round2(
-      items.reduce((sum, line) => sum + (Number(line.cgstAmount) || 0), 0),
-    );
-    sgstAmount = round2(
-      items.reduce((sum, line) => sum + (Number(line.sgstAmount) || 0), 0),
-    );
-    igstAmount = round2(
-      items.reduce((sum, line) => sum + (Number(line.igstAmount) || 0), 0),
-    );
-    taxType =
-      igstAmount > 0 && cgstAmount === 0 && sgstAmount === 0
-        ? TAX_TYPE_IGST
-        : TAX_TYPE_CGST_SGST;
-    const sample =
-      items[0] || splitGstByPlaceOfSupply(0, DEFAULT_TAX_RATE, { state });
-    cgstRate = sample.cgstRate;
-    sgstRate = sample.sgstRate;
-    igstRate = sample.igstRate;
-  }
-
-  const payload = {
+  return {
     customer: {
       name: customer.name.trim(),
       contactNumber: customer.contactNumber.trim(),
@@ -139,18 +96,11 @@ export function buildOrderPayload(cartItems, customer, subtotal, coupon = null) 
     sgstRate,
     igstRate,
     taxRate: DEFAULT_TAX_RATE,
-    subtotal: preDiscountSubtotal,
-    discountAmount,
-    totalAmount: payable,
+    subtotal: orderSubtotal,
+    totalAmount: orderSubtotal,
     currency: "INR",
     orderType: "domestic",
   };
-
-  if (couponCode && discountAmount > 0) {
-    payload.couponCode = couponCode;
-  }
-
-  return payload;
 }
 
 function round2(value) {

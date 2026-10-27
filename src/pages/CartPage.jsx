@@ -198,10 +198,6 @@ export default function CartPage() {
                   </div>
                 </dl>
 
-                <p className="mt-4 text-body-sm text-brown-500">
-                  Have a coupon? Apply it at checkout.
-                </p>
-
                 <div className="mt-4 flex flex-col gap-3">
                   <Link
                     to="/checkout"

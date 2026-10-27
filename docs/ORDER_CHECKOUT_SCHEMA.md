@@ -4,7 +4,7 @@ Schema for **placing customer orders** from the Nimma Ashwini storefront checkou
 
 **Audience:** Backend team  
 **Status:** Proposed — frontend implemented against this contract  
-**Related:** [CART_SCHEMA.md](./CART_SCHEMA.md), [API.md](./API.md), [PRODUCT_SCHEMA.md](./PRODUCT_SCHEMA.md), [GST_PLACE_OF_SUPPLY_SCHEMA.md](./GST_PLACE_OF_SUPPLY_SCHEMA.md), [COUPON_SCHEMA.md](./COUPON_SCHEMA.md)
+**Related:** [CART_SCHEMA.md](./CART_SCHEMA.md), [API.md](./API.md), [PRODUCT_SCHEMA.md](./PRODUCT_SCHEMA.md), [GST_PLACE_OF_SUPPLY_SCHEMA.md](./GST_PLACE_OF_SUPPLY_SCHEMA.md)
 
 ---
 
@@ -110,34 +110,18 @@ Prices are **GST-inclusive (5%)**. Frontend now also sends a place-of-supply tax
   "igstRate": 0,
   "taxRate": 5,
   "subtotal": 750,
-  "discountAmount": 0,
   "totalAmount": 750,
   "currency": "INR",
   "orderType": "domestic"
 }
 ```
 
-Optional coupon (see [COUPON_SCHEMA.md](./COUPON_SCHEMA.md)):
-
-```json
-{
-  "couponCode": "ASHW7K2M9P",
-  "subtotal": 1500,
-  "discountAmount": 225,
-  "totalAmount": 1275
-}
-```
-
 | Field | Required | Description |
 |-------|----------|-------------|
-| `couponCode` | No | Uppercase coupon code when applied at checkout |
-| `discountAmount` | No | Inclusive INR discount (client preview; **backend recomputes**) |
-| `subtotal` | Yes | Sum of line totals **before** discount (GST-inclusive) |
-| `totalAmount` | Yes | Payable after discount (GST-inclusive) |
+| `subtotal` | Yes | Sum of line totals (GST-inclusive) |
+| `totalAmount` | Yes | Payable amount (GST-inclusive) |
 
-When a coupon is applied, recompute the order-level tax block from the **payable** inclusive `totalAmount`. Line items remain full-price product snapshots.
-
-Backend should **persist** this tax block (or recompute from inclusive amounts + `customer.state`). Do not add GST on top of `unitPrice`. Re-validate any `couponCode` server-side.
+Backend should **persist** this tax block (or recompute from inclusive amounts + `customer.state`). Do not add GST on top of `unitPrice`.
 
 ---
 
@@ -174,10 +158,8 @@ Backend should **persist** this tax block (or recompute from inclusive amounts +
 
 | Field | Required | Type | Description |
 |-------|----------|------|-------------|
-| `subtotal` | Yes | number | Sum of all `lineTotal` values (pre-discount) |
-| `discountAmount` | No | number | Coupon discount in INR (inclusive); 0 if none |
-| `couponCode` | No | string | Applied coupon code |
-| `totalAmount` | Yes | number | Payable after discount |
+| `subtotal` | Yes | number | Sum of all `lineTotal` values |
+| `totalAmount` | Yes | number | Payable amount |
 | `currency` | Yes | string | Always `"INR"` for now |
 | `orderType` | Yes | string | Always `"domestic"` for API v1 |
 
@@ -250,8 +232,7 @@ Example:
 6. Verify `unitPrice` matches variant price (or log snapshot difference)
 7. Verify `quantity` ≤ variant `maxQuantityPerOrder` and ≤ available stock
 8. Recompute `lineTotal` and `subtotal` server-side — reject if client totals differ
-9. If `couponCode` present: re-validate, recompute `discountAmount` / `totalAmount`, persist coupon on order (see [COUPON_SCHEMA.md](./COUPON_SCHEMA.md))
-10. Decrement stock on successful order (variant + total product stock)
+9. Decrement stock on successful order (variant + total product stock)
 
 ---
 

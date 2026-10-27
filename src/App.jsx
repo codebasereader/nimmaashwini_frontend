@@ -14,7 +14,6 @@ import VendorsPage from "./admin/pages/master-data/VendorsPage";
 import OrdersPage from "./admin/pages/orders/OrdersPage";
 import CustomersPage from "./admin/pages/customers/CustomersPage";
 import ProductsPage from "./admin/pages/catalog/ProductsPage";
-import CouponsPage from "./admin/pages/coupons/CouponsPage";
 import AppLayout from "./components/layout/AppLayout";
 import ScrollToTop from "./components/ScrollToTop";
 import LogoLoader from "./components/sections/logoloader";
@@ -61,7 +60,6 @@ const App = () => {
         <Route index element={<Navigate to="categories" replace />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="products" element={<ProductsPage />} />
-        <Route path="coupons" element={<CouponsPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="customers" element={<CustomersPage />} />
         <Route path="expenses" element={<ExpensesPage />} />

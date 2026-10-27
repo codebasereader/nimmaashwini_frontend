@@ -300,7 +300,7 @@ return redirect(302, `${FRONTEND_URL}/payment-failure?merchantOrderId=${orderId}
 
 | Page | Behaviour |
 |------|-----------|
-| `/payment-success` | Clears cart; reads `merchantOrderId` (and aliases); calls confirmation API; shows order number, items, address, totals, discount |
+| `/payment-success` | Clears cart; reads `merchantOrderId` (and aliases); calls confirmation API; shows order number, items, address, totals |
 | `/payment-failure` | Keeps cart; shows reference; tries confirmation API for status; **Try Again** → `POST /api/orders/retry-payment` → PhonePe (see [PAYMENT_RETRY_SCHEMA.md](./PAYMENT_RETRY_SCHEMA.md)); WhatsApp support link |
 | Checkout | `POST /api/orders` → `window.location.assign(checkoutPageUrl)` |
 

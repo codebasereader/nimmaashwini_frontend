@@ -12,7 +12,6 @@ import {
   LogOut,
   Package,
   Receipt,
-  Ticket,
   Users,
 } from "lucide-react";
 import { logout } from "../../store/slices/authSlice";
@@ -38,12 +37,6 @@ export const ADMIN_NAV_ITEMS = [
     label: "Catalog",
     to: "/admin/products",
     icon: Package,
-  },
-  {
-    id: "coupons",
-    label: "Coupons",
-    to: "/admin/coupons",
-    icon: Ticket,
   },
   {
     id: "orders",

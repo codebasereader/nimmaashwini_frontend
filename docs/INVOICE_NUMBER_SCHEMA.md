@@ -9,6 +9,26 @@ This document defines the **shared invoice / order number sequence**. In this pr
 
 ---
 
+## ⚠️ Format change — supersedes `NA-YYYY-NNNNN` below
+
+The frontend now uses **`MON-YY-N`**, e.g. `OCT-26-9176`. Wherever this document says `NA-YYYY-NNNNN` (format, regex, examples, bootstrap, allocation), apply the rules in this section instead.
+
+| Part | Rule | Example |
+|------|------|---------|
+| Month | 3-letter uppercase: `JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC` | `OCT` |
+| Year | Last 2 digits of the year | `26` |
+| Number | 1–9 digits, **no zero padding** | `9176` |
+
+Regex (server + client): `^(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-[0-9]{2}-[0-9]{1,9}$`
+
+- **Admin edits only the number.** The Invoice Number page shows the `MON-YY-` prefix as fixed (current month/year) and lets the admin type the digits. The frontend sends the full string, e.g. `PUT { "nextInvoiceNumber": "OCT-26-9176" }`.
+- **Prefix comes from the current month/year**, not from a stored `prefix`/`year`. When the month changes, the allocator should issue `NOV-26-…` using the same running number (continuing `+1`) unless product decides to reset monthly — **confirm this with the frontend owner**.
+- `PUT` validation, collision (`409`) and "ignore client `orderNumber`" rules are unchanged; only the format/regex differ.
+- Settings `prefix`, `year`, `padding` are no longer meaningful; the frontend only reads `nextInvoiceNumber` and `lastIssuedInvoiceNumber`.
+- Historical `NA-YYYY-NNNNN` orders are left as they are; they are not valid input for new numbers.
+
+---
+
 ## Goals
 
 | Goal | Behaviour |

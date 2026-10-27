@@ -7,7 +7,9 @@ import {
 } from "../../../store/slices/invoiceSettingsSlice";
 import {
   INVOICE_NUMBER_FORMAT_HINT,
-  validateNextInvoiceNumber,
+  getInvoicePrefix,
+  parseInvoiceNumber,
+  validateNextInvoiceSequence,
 } from "../../../lib/invoiceNumber";
 import { AdminField, AdminInput } from "../../components/AdminFormFields";
 
@@ -16,7 +18,9 @@ export default function InvoiceSettingsPage() {
   const { settings, status, error, mutationStatus, mutationError } =
     useSelector((state) => state.invoiceSettings);
 
-  const [nextInvoiceNumber, setNextInvoiceNumber] = useState("");
+  // The month-year prefix is fixed; admins only edit the number after it.
+  const prefix = getInvoicePrefix();
+  const [draft, setDraft] = useState(null);
   const [fieldError, setFieldError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -25,11 +29,8 @@ export default function InvoiceSettingsPage() {
     dispatch(loadInvoiceSettings());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (settings?.nextInvoiceNumber) {
-      setNextInvoiceNumber(settings.nextInvoiceNumber);
-    }
-  }, [settings?.nextInvoiceNumber]);
+  const savedSequence = parseInvoiceNumber(settings?.nextInvoiceNumber)?.sequence;
+  const nextSequence = draft ?? (savedSequence != null ? String(savedSequence) : "");
 
   const saving = mutationStatus === "loading";
   const loading = status === "loading";
@@ -39,7 +40,7 @@ export default function InvoiceSettingsPage() {
     setSuccessMessage(null);
     dispatch(clearInvoiceSettingsErrors());
 
-    const result = validateNextInvoiceNumber(nextInvoiceNumber);
+    const result = validateNextInvoiceSequence(nextSequence);
     if (!result.ok) {
       setFieldError(result.message);
       return;
@@ -53,6 +54,7 @@ export default function InvoiceSettingsPage() {
       setSuccessMessage(
         `Next invoice number set to ${action.payload?.nextInvoiceNumber || result.value}. New online and manual orders will continue from this number upwards.`,
       );
+      setDraft(null);
     }
   };
 
@@ -110,25 +112,31 @@ export default function InvoiceSettingsPage() {
               required
               error={fieldError}
             >
-              <AdminInput
-                value={nextInvoiceNumber}
-                onChange={(event) => {
-                  setNextInvoiceNumber(event.target.value.toUpperCase());
-                  setFieldError(null);
-                  setSuccessMessage(null);
-                }}
-                placeholder="NA-2026-00001"
-                autoComplete="off"
-                spellCheck={false}
-                className="font-mono tracking-wide"
-                disabled={saving}
-              />
+              <div className="flex items-stretch gap-2">
+                <span className="flex items-center rounded-md border border-cream-300 bg-cream-100 px-3 font-mono tracking-wide text-brown-700 select-none">
+                  {prefix}
+                </span>
+                <AdminInput
+                  value={nextSequence}
+                  onChange={(event) => {
+                    setDraft(event.target.value.replace(/[^0-9]/g, ""));
+                    setFieldError(null);
+                    setSuccessMessage(null);
+                  }}
+                  placeholder="9176"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  className="font-mono tracking-wide"
+                  disabled={saving}
+                />
+              </div>
             </AdminField>
 
             <p className="text-xs text-brown-500">
               Format: <span className="font-mono">{INVOICE_NUMBER_FORMAT_HINT}</span>.
-              The number you save is the next one assigned; after that, invoices
-              continue +1 (manual and online).
+              The month and year are fixed to the current month; edit only the
+              number. It is the next one assigned; after that, invoices continue
+              +1 (manual and online).
             </p>
 
             {(mutationError || successMessage) && (
