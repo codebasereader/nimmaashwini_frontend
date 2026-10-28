@@ -43,7 +43,7 @@ export function OrderLabel({ order, printDate }) {
       {/* Brand header */}
       <div
         className="flex items-center gap-[2.5mm] bg-olive-800 px-[3mm] text-white"
-        style={{ height: "16mm" }}
+        style={{ height: "14mm" }}
       >
         <div
           className="flex shrink-0 items-center justify-center rounded-full bg-white"
@@ -62,6 +62,9 @@ export function OrderLabel({ order, printDate }) {
           >
             NIMMA ASHWINI
           </p>
+          <p className="tracking-[0.1em] text-gold-200" style={{ fontSize: "5.5pt" }}>
+            nimmaashwini.com
+          </p>
         </div>
         <div className="shrink-0 text-right leading-tight">
           <p style={{ fontSize: "4.8pt", letterSpacing: "0.14em" }} className="text-gold-200 uppercase">
@@ -70,18 +73,12 @@ export function OrderLabel({ order, printDate }) {
           <p className="font-mono font-bold text-inherit" style={{ fontSize: "8pt" }}>
             {order?.orderNumber || "—"}
           </p>
+          <p className="text-inherit" style={{ fontSize: "5.5pt" }}>
+            {formatLabelDate(printDate)}
+          </p>
         </div>
       </div>
       <div className="bg-gold-500" style={{ height: "1.1mm" }} />
-
-      {/* Date + website */}
-      <div
-        className="flex items-center justify-between border-b border-dashed border-olive-800 px-[3mm]"
-        style={{ height: "5.5mm", fontSize: "6.5pt" }}
-      >
-        <span className="font-semibold">{formatLabelDate(printDate)}</span>
-        <span className="tracking-[0.1em] text-olive-900">nimmaashwini.com</span>
-      </div>
 
       {/* Deliver to */}
       <div className="flex flex-1 gap-[2.5mm] px-[3mm] py-[2mm]" style={{ minHeight: 0 }}>
@@ -179,10 +176,26 @@ export function OrderLabel({ order, printDate }) {
         </ul>
       </div>
 
+      {/* From */}
+      <div
+        className="mx-[3mm] mb-[1.5mm] rounded-md border border-dashed border-olive-800 px-[2mm] py-[0.8mm] leading-snug"
+        style={{ fontSize: "5.8pt" }}
+      >
+        <p className="font-bold tracking-[0.12em] text-inherit uppercase">
+          From: Ashwini Natural Products
+        </p>
+        <p className="text-inherit">
+          #47, 2nd Cross, Nanda Deepa Layout, RR Nagar, Bangalore - 560098
+        </p>
+        <p className="text-inherit">
+          ashwininaturalproducts@gmail.com · Ph: 6363250586
+        </p>
+      </div>
+
       {/* Prepaid */}
       <div
         className="flex items-center justify-between bg-terracotta-600 px-[3mm] text-white"
-        style={{ height: "13.5mm" }}
+        style={{ height: "12.5mm" }}
       >
         <div className="leading-none">
           <p
