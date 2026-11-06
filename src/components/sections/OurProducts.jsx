@@ -16,7 +16,7 @@ const LANDING_PRODUCTS = [
     slug: "ragi-malt-powder",
     name: "Ragi Malt Powder",
     titleLines: ["Ragi Malt", "Powder"],
-    image: "/landingproducts/ragimal_land.png",
+    image: "/landingproducts/ragimal_land.webp",
     description:
       "A wholesome blend of millets and grains to boost strength and vitality.",
   },
@@ -24,7 +24,7 @@ const LANDING_PRODUCTS = [
     slug: "herbal-hair-oil",
     name: "Herbal Hair Oil",
     titleLines: ["Herbal Hair", "Oil"],
-    image: "/landingproducts/herbaloil_land.png",
+    image: "/landingproducts/herbaloil_land.webp",
     description:
       "A nourishing blend of herbs that strengthens your hair from root to tip.",
   },
@@ -32,7 +32,7 @@ const LANDING_PRODUCTS = [
     slug: "herbal-shampoo",
     name: "Herbal Hair Shampoo",
     titleLines: ["Herbal Hair", "Shampoo"],
-    image: "/landingproducts/herbalshampoo_land.png",
+    image: "/landingproducts/herbalshampoo_land.webp",
     description:
       "A gentle cleanser enriched with herbs for strong, healthy, and shiny hair.",
   },

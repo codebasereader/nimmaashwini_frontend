@@ -147,7 +147,7 @@ export function toLandingProduct(apiProduct) {
     slug: apiProduct.slug,
     name: apiProduct.name,
     titleLines: splitTitleLines(apiProduct.name),
-    image: getProductCoverUrl(apiProduct) || "/landingproducts/herbaloil_land.png",
+    image: getProductCoverUrl(apiProduct) || "/landingproducts/herbaloil_land.webp",
     description,
   };
 }
