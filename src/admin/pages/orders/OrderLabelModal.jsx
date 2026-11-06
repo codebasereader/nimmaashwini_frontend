@@ -4,6 +4,7 @@ import { AlertTriangle, MapPin, Package, Phone, Printer, X } from "lucide-react"
 import { iconProps } from "../../../lib/icons";
 
 const MAX_ITEM_LINES = 3;
+const SENDER_CUSTOMER_ID = "1825201953";
 
 function formatLabelDate(date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -181,9 +182,14 @@ export function OrderLabel({ order, printDate }) {
         className="mx-[3mm] mb-[1.5mm] rounded-md border border-dashed border-olive-800 px-[2mm] py-[0.8mm] leading-snug"
         style={{ fontSize: "5.8pt" }}
       >
-        <p className="font-bold tracking-[0.12em] text-inherit uppercase">
-          From: Ashwini Natural Products
-        </p>
+        <div className="flex items-center justify-between gap-[1mm]">
+          <p className="font-bold tracking-[0.12em] text-inherit uppercase">
+            From: Ashwini Natural Products
+          </p>
+          <p className="shrink-0 rounded-sm bg-olive-800 px-[1.4mm] font-bold tracking-[0.06em] text-white">
+            ID: {SENDER_CUSTOMER_ID}
+          </p>
+        </div>
         <p className="text-inherit">
           #47, 2nd Cross, Nanda Deepa Layout, RR Nagar, Bangalore - 560098
         </p>

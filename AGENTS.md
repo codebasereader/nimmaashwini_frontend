@@ -90,7 +90,7 @@ src/
 
 ## Testing mode flag
 
-`TESTING_MODE` in `src/lib/siteNotice.js` is a single switch that shows the testing banner (`TestingNoticeBar`), the welcome pop-up (`TestingNoticePopup`, seen-state in `sessionStorage`), and **disables payment** on `CheckoutPage` (button disabled, auto-actions skipped). It is currently `true`. Flipping it to `false` is the go-live step — don't change it as a side effect of other work.
+`TESTING_MODE` in `src/lib/siteNotice.js` is a single switch that shows the testing banner (`TestingNoticeBar`), the welcome pop-up (`TestingNoticePopup`, seen-state in `sessionStorage`). It no longer blocks payment on `CheckoutPage` (removed so WhatsApp confirmation could be tested with real payments). It is currently `true`. Flipping it to `false` is the go-live step — don't change it as a side effect of other work.
 
 ## SEO
 

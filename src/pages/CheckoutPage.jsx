@@ -15,7 +15,6 @@ import {
   DOMESTIC_COUNTRY,
   WHATSAPP_DISPLAY,
 } from "../lib/checkout";
-import { TESTING_MODE } from "../lib/siteNotice";
 import { buildOrderPayload, validateCheckoutForm } from "../lib/order";
 import {
   defaultTransition,
@@ -146,7 +145,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (TESTING_MODE || isInternational || items.length === 0) return;
+    if (isInternational || items.length === 0) return;
 
     const validationErrors = validateCheckoutForm(form, { isInternational });
     if (Object.keys(validationErrors).length > 0) {
@@ -394,15 +393,13 @@ export default function CheckoutPage() {
 
                   <motion.button
                     type="submit"
-                    disabled={submitting || TESTING_MODE}
+                    disabled={submitting}
                     className="btn btn-primary focus-ring w-full px-6 py-3.5 disabled:opacity-60"
                     whileHover={{ scale: submitting ? 1 : 1.02 }}
                     whileTap={{ scale: submitting ? 1 : 0.98 }}
                     transition={springSnappy}
                   >
-                    {TESTING_MODE
-                      ? "Payments disabled (testing mode)"
-                      : submitting
+                    {submitting
                       ? "Redirecting to Payment..."
                       : `Pay ${subtotalDisplay}`}
                   </motion.button>
